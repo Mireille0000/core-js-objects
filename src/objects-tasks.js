@@ -277,8 +277,46 @@ function sortCitiesArray(/* arr */) {
  *    "Poland" => ["Lodz"]
  *   }
  */
-function group(/* array, keySelector, valueSelector */) {
-  throw new Error('Not implemented');
+function group(array, keySelector, valueSelector) {
+  const keysNames = Object.keys(array[0]);
+
+  const res = array.reduce((acc, _, index) => {
+    const findObj = array[index];
+    const myKey = keysNames[0];
+    const accum = acc;
+
+    accum.push(array.filter((item) => item[myKey] === findObj[myKey]));
+
+    return accum;
+  }, []);
+
+  const dataKey = res.reduce((acc, _, index) => {
+    acc.push(res[index].map(keySelector));
+    return acc;
+  }, []);
+
+  const dataValue = res.reduce((acc, _, index) => {
+    acc.push(res[index].map(valueSelector));
+    return acc;
+  }, []);
+
+  const eachValueArrToStr = dataValue.reduce((acc, _, index) => {
+    acc.push(JSON.stringify(dataValue[index]));
+    return acc;
+  }, []);
+
+  const keysArr = Array.from(new Set(dataKey.flat()));
+  const valuesArr = Array.from(new Set(eachValueArrToStr));
+
+  const createdNewMap = new Map();
+
+  const result = keysArr.reduce((acc, item, index) => {
+    acc.set(keysArr[index], JSON.parse(valuesArr[index]));
+
+    return acc;
+  }, createdNewMap);
+
+  return result;
 }
 
 /**
